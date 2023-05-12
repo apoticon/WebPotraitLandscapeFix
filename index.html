@@ -39,7 +39,7 @@
 
 <body>
     <div id="video-container">
-        <video id="video"></video>
+        <video id="video" autoplay muted></video>
     </div>
     <div class="controls">
         <button id="flip-camera">Flip Camera</button>
@@ -64,7 +64,9 @@
         navigator.mediaDevices.getUserMedia(constraints)
             .then((stream) => {
                 video.srcObject = stream;
-                video.play();
+                video.addEventListener('touchstart', function() {
+                    video.play();
+                }, false);
             })
             .catch((error) => {
                 console.log("Error accessing media devices.", error);
@@ -92,7 +94,9 @@
             navigator.mediaDevices.getUserMedia(constraints)
                 .then((stream) => {
                     video.srcObject = stream;
-                    video.play();
+                    video.addEventListener('touchstart', function() {
+                        video.play();
+                    }, false);
                 })
                 .catch((error) => {
                     console.log("Error accessing media devices.", error);
