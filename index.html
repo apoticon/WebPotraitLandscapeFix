@@ -2,55 +2,100 @@
 <html>
 
 <head>
-    <meta charset="UTF-8">
     <title>Live Stream</title>
     <style>
-        #video-box {
+        #video-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             width: 100%;
-            max-width: 640px;
-            margin: auto;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: rotate(0deg);
+        }
+
+        .controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1;
+        }
+
+        button {
+            font-size: 16px;
+            margin: 5px;
+            padding: 5px;
         }
     </style>
 </head>
 
 <body>
-    <div id="video-box">
-        <video id="video" playsinline autoplay></video>
+    <div id="video-container">
+        <video id="video"></video>
+    </div>
+    <div class="controls">
+        <button id="flip-camera">Flip Camera</button>
+        <button id="rotate-video">Rotate Video</button>
     </div>
     <script>
-        const video = document.getElementById('video');
-        const portraitMode = window.matchMedia("(orientation: portrait)").matches;
+        const video = document.getElementById("video");
+        const flipCameraButton = document.getElementById("flip-camera");
+        const rotateVideoButton = document.getElementById("rotate-video");
 
-        let constraints;
-        if (portraitMode) {
-            constraints = {
-                audio: true,
-                video: {
-                    width: { ideal: 1080 },
-                    height: { ideal: 1920 },
-                    aspectRatio: 9 / 16,
-                    facingMode: "environment"
-                }
-            };
-        } else {
-            constraints = {
-                audio: true,
-                video: {
-                    width: { ideal: 1920 },
-                    height: { ideal: 1080 },
-                    aspectRatio: 16 / 9,
-                    facingMode: "environment"
-                }
-            };
-        }
+        let facingMode = "environment"; // default rear camera
+        let portraitMode = window.matchMedia("(orientation: portrait)").matches;
+
+        const constraints = {
+            audio: false,
+            video: {
+                facingMode: facingMode,
+                aspectRatio: portraitMode ? 0.75 : 1.33,
+            },
+        };
 
         navigator.mediaDevices.getUserMedia(constraints)
-            .then(stream => {
+            .then((stream) => {
                 video.srcObject = stream;
+                video.play();
             })
-            .catch(error => {
-                console.error(error);
+            .catch((error) => {
+                console.log("Error accessing media devices.", error);
             });
+
+        flipCameraButton.addEventListener("click", () => {
+            if (facingMode === "user") {
+                facingMode = "environment";
+            } else {
+                facingMode = "user";
+            }
+            constraints.video.facingMode = facingMode;
+            restartVideoStream();
+        });
+
+        rotateVideoButton.addEventListener("click", () => {
+            let degrees = portraitMode ? 90 : 0;
+            video.style.transform = `rotate(${degrees}deg)`;
+            portraitMode = !portraitMode;
+            constraints.video.aspectRatio = portraitMode ? 0.75 : 1.33;
+            restartVideoStream();
+        });
+
+        function restartVideoStream() {
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then((stream) => {
+                    video.srcObject = stream;
+                    video.play();
+                })
+                .catch((error) => {
+                    console.log("Error accessing media devices.", error);
+                });
+        }
     </script>
 </body>
 
