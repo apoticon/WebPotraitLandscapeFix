@@ -108,24 +108,9 @@
                         console.error(error);
                     });
                 }
-            } else {
-                if (screen.orientation.angle === 0) {
-                    screen.orientation.lock("portrait").then(() => {
-                        videoElement.style.transform = "rotate(0deg)";
-                    }).catch((error) => {
-                        console.error(error);
-                    });
-                } else {
-                    screen.orientation.lock("landscape").then(() => {
-                        videoElement.style.transform = "rotate(90deg)";
-                    }).catch((error) => {
-                        console.error(error);
-                    });
-                }
             }
         });
     </script>
 </body>
 
 </html>
-```
