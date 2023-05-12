@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Live Stream</title>
+    <style>
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="video-container">
+        <video id="video" playsinline autoplay></video>
+    </div>
+    <script>
+        const video = document.getElementById('video');
+        const videoContainer = document.getElementById('video-container');
+
+        function handleSuccess(stream) {
+            video.srcObject = stream;
+        }
+
+        function handleError(error) {
+            console.error('Error accessing media devices.', error);
+        }
+
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            let constraints = {
+                video: {
+                    facingMode: 'environment'
+                }
+            };
+
+            if (isMobile) {
+                constraints.video = {
+                    width: { ideal: 1080 },
+                    height: { ideal: 1920 },
+                    facingMode: 'environment',
+                    aspectRatio: 9 / 16
+                }
+                videoContainer.style.transform = 'rotate(90deg)';
+            } else {
+                constraints.video = {
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 },
+                    facingMode: 'environment',
+                    aspectRatio: 16 / 9
+                }
+            }
+
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(handleSuccess)
+                .catch(handleError);
+        } else {
+            console.error('MediaDevices interface not available.');
+        }
+    </script>
+</body>
+
+</html>
