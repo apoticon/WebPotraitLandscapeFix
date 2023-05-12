@@ -61,7 +61,7 @@
 
         // Set media constraints based on device and orientation
         let constraints = {};
-        if (portraitMode && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        if (portraitMode) {
             constraints = { audio: true, video: { facingMode: "user", height: { min: 360, ideal: 720, max: 1080 } } };
         } else {
             constraints = { audio: true, video: { facingMode: "environment", width: { min: 640, ideal: 1280, max: 1920 }, height: { min: 360, ideal: 720, max: 1080 } } };
